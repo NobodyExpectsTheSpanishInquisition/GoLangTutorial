@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  postgres:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile.pssql
+      args:
+        - IMAGE_TAG=${POSTGRES_IMAGE_TAG}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_SIMPLE_TODO_APP}
+        - POSTGRES_USER=${POSTGRES_USER_SIMPLE_TODO_APP}
+        - POSTGRES_DB=${POSTGRES_DATABASE_SIMPLE_TODO_APP}
+    container_name: ${POSTGRES_CONTAINER_NAME_SIMPLE_TODO_APP}
+    ports:
+      - ${POSTGRES_EXTERNAL_PORT_SIMPLE_TODO_APP}:${POSTGRES_INTERNAL_PORT_SIMPLE_TODO_APP}
