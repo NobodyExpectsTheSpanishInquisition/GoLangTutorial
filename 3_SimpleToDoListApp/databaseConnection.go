@@ -3,13 +3,15 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"os"
 )
 
 type DatabaseConnection interface {
-	connect() *sql.DB
-	CreateConnectionUrl() string
+	connect() *gorm.DB
+	getDsn() string
 }
 
 type PostgresConnection struct {
@@ -18,8 +20,9 @@ type PostgresConnection struct {
 	conn                     *sql.DB
 }
 
-func (conn PostgresConnection) connect() *sql.DB {
-	open, err := sql.Open("postgres", conn.CreateConnectionUrl())
+func (conn PostgresConnection) connect() *gorm.DB {
+	open, err := gorm.Open(postgres.Open(conn.getDsn()), &gorm.Config{})
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -27,7 +30,7 @@ func (conn PostgresConnection) connect() *sql.DB {
 	return open
 }
 
-func (conn PostgresConnection) CreateConnectionUrl() string {
+func (conn PostgresConnection) getDsn() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s", conn.user, conn.password, conn.host, conn.port, conn.db)
 }
 
